@@ -1,19 +1,31 @@
 #! /usr/bin/env python
 import sys
 
-def find_factor_cnt(begin, end, to_find):
-    total = 0
-    for i in range(begin, end):
-        if to_find % i == 0:
-            total += 1
-    return total
-        
+class FindFactorJob(object):
+
+    def __init__(self, begin, end, to_find):
+        self.begin = begin
+        self.end = end
+        self.to_find = to_find
+
+    def solve(self):
+        total = 0
+        for i in range(self.begin, self.end):
+            if self.to_find % i == 0:
+                total += 1
+        return total
+
+    def run(self):
+        self.result = self.solve()
+
+    def get_result(self):
+        return self.result
+
 def main():
-    begin = int(sys.argv[1])
-    end = int(sys.argv[2])
-    to_find = int(sys.argv[3])
-    print begin, end, to_find
-    print find_factor_cnt(begin, end, to_find)
+    begin, end, to_find = map(lambda x: int(x), sys.argv[1:])
+    job = FindFactorJob(begin, end, to_find)
+    job.run()
+    print job.get_result()
     return 0
 
 if __name__ == '__main__':
