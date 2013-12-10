@@ -14,11 +14,11 @@ class Example(object):
         return self.add(a,b)
 
 def build_rpc_server_from_component(comp):
-    server = SimpleXMLRPCServer(('localhost', config.ports[comp.__class__.__name__]))
+    server = SimpleXMLRPCServer(('', config.port[comp.__class__.__name__]))
     server.register_instance(comp)
     return server 
 
 if __name__ == '__main__':
-    server = SimpleXMLRPCServer(('localhost', 8000))
+    server = SimpleXMLRPCServer(('', 3796))
     server.register_instance(Example())
     server.serve_forever()

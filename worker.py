@@ -1,14 +1,18 @@
 #! /usr/bin/env python
 
-import component
+import os
+import subprocess
+
+import framework
 import config
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 class Worker(object):
-    def run_job(self, job):
-        job.run()
-        return job.get_result()
+    def run_job(self, cmd):
+        result = subprocess.check_output(cmd)
+        return result
+
 
 if __name__ == '__main__':
-    component.build_rpc_server_from_component(Worker()).serve_forever()
+    framework.build_rpc_server_from_component(Worker()).serve_forever()

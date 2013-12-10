@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import component
+import framework
 import config
 
 class Dispatcher(object):
@@ -8,5 +8,5 @@ class Dispatcher(object):
         return 'jizz'
 
 if __name__ == '__main__':
-    component.build_rpc_server_from_component(Dispatcher()).serve_forever()
+    framework.build_rpc_server_from_framework(Dispatcher()).serve_forever()
 

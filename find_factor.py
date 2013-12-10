@@ -1,5 +1,10 @@
 #! /usr/bin/env python
 import sys
+import xmlrpclib
+
+import config
+import pickle
+import framework 
 
 class FindFactorJob(object):
 
@@ -21,12 +26,13 @@ class FindFactorJob(object):
     def get_result(self):
         return self.result
 
-def main():
-    begin, end, to_find = map(lambda x: int(x), sys.argv[1:])
-    job = FindFactorJob(begin, end, to_find)
-    job.run()
-    print job.get_result()
-    return 0
-
 if __name__ == '__main__':
-    exit(main())
+    begin, end, to_find = map(lambda x: int(x), sys.argv[1:4])
+    if len(sys.argv) <= 4 or sys.argv[4] != 'rpc':
+        job = FindFactorJob(begin, end, to_find)
+        job.run()
+        print job.get_result()
+    else:
+        worker_name = config.workers[0]
+        addr = 'http://%s:%d'%(config.worker_address[worker_name], config.port['Worker'])
+        print xmlrpclib.ServerProxy(addr).run_job(['/bin/ls', '-al'])

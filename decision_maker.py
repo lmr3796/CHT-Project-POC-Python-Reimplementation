@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-import component
+import framework
 import config
 
 class DecisionMaker(object):
@@ -8,5 +8,5 @@ class DecisionMaker(object):
         return 'jizz'
 
 if __name__ == '__main__':
-    component.build_rpc_server_from_component(DecisionMaker()).serve_forever()
+    framework.build_rpc_server_from_framework(DecisionMaker()).serve_forever()
 
