@@ -8,6 +8,7 @@ import framework
 from job import Job
 
 THREAD_TO_USE = 8
+SINGLE_THREAD_TIME = 2.46
 
 class FindFactorSolver(object):
 
@@ -46,13 +47,16 @@ if __name__ == '__main__':
         print solver.get_result()
     else:
         assert sys.argv[-1] == 'rpc'
+        deadline = float(sys.argv[4])
         job = Job()
         for r in solver.split_ranges(THREAD_TO_USE):
             job.add_task(__file__, str(r[0]), str(r[1]), str(to_find))
-        job.set_single_server_throughput(4.7)
-        job.set_required_throughput(6)
+        job.set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
+        job.set_required_throughput(THREAD_TO_USE/deadline)
 
-        print framework.get_dispatcher().dispatch_job([job])
+        schedule = framework.get_dispatcher().dispatch_job([job])
+        print schedule
+
 
         #print xmlrpclib.ServerProxy(addr).dispatch_job()
 
