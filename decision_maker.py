@@ -7,7 +7,9 @@ class DecisionMaker(object):
 
     def schedule_jobs(self, job_set, worker_available):
         try:
-            sorted_job_set = sorted([j for j in enumerate(job_set)], lambda x: x[1]['priority'], reverse=True)
+            print len(job_set)
+            print job_set
+            sorted_job_set = sorted([(idx, j) for idx, j in enumerate(job_set)], key=lambda x: x[1]['priority'], reverse=True)
             worker_scheduled = {w: False for w, s in worker_available.iteritems() if s}
             schedule_result = [None] * len(job_set)
             for i, job in sorted_job_set:

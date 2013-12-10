@@ -48,13 +48,17 @@ if __name__ == '__main__':
     else:
         assert sys.argv[-1] == 'rpc'
         deadline = float(sys.argv[4])
-        job = Job()
+        job_set = [Job(), Job()]
         for r in solver.split_ranges(THREAD_TO_USE):
-            job.add_task(__file__, str(r[0]), str(r[1]), str(to_find))
-        job.set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
-        job.set_required_throughput(THREAD_TO_USE/deadline)
+            job_set[0].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
+        job_set[0].set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
+        job_set[0].set_required_throughput(THREAD_TO_USE/deadline)
+        for r in solver.split_ranges(THREAD_TO_USE):
+            job_set[1].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
+        job_set[1].set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
+        job_set[1].set_required_throughput(THREAD_TO_USE/deadline*2)
 
-        schedule = framework.get_dispatcher().dispatch_job([job])
+        schedule = framework.get_dispatcher().dispatch_job(job_set)
         print schedule
 
 
