@@ -4,9 +4,50 @@ import socket
 import xmlrpclib
 
 import config
+import job
 
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+from threading import Thread
+
+
+# TODO: retrieve back results
+def run_task_on_worker(task, worker):
+    addr = 'http://%s:%d'%(config.worker_address[worker], config.port['Worker'])
+    return xmlrpclib.ServerProxy(addr).run_job(task)
+
+def run_single_job(job, worker_set):
+    import time
+    curr = time.time()
+    res = []
+    def pull_job_for_worker(q, worker):
+        while not q.empty():
+            i, t = q.get()
+            res.append((i, run_task_on_worker(t,worker)))
+        return
+    from Queue import Queue
+    task_queue = Queue()
+    for i, t in enumerate(job.get_task()):
+        task_queue.put((i,t))
+    worker_runners = map(lambda w: Thread(target=pull_job_for_worker, args=(task_queue, w)), worker_set)
+    for t in worker_runners:
+        t.start()
+    for t in worker_runners:
+        t.join()
+    print '%s: %02.3f seconds, %d tasks, ans=%d' % (job.get_name(), time.time() - curr, len(job.get_task()), reduce(lambda x,y: x+int(y[1]), res, 0))
+    return res
+
+def run_job_set_by_schdule(job_set, schedule):
+    assert len(job_set) == len(schedule)
+    to_run = []
+    for job, worker_set in zip(job_set, schedule):
+        t = Thread(target=run_single_job, args=(job, worker_set))
+        to_run.append(t)
+        t.start()
+    for t in to_run:
+        t.join()
+    return
+
 
 # TODO: make those components registerable?
 def get_dispatcher():

@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 
 class Job(object):
-    def __init__(self):
+    def __init__(self, name):
+        self.jobname = name
         self.task = []
         self.priority = 0
         self.required_throughput = 0.0
@@ -11,6 +12,12 @@ class Job(object):
     def add_task(self, cmd, *arg):
         self.task.append([cmd] + list(arg))
         return
+
+    def get_name(self):
+        return self.jobname
+
+    def get_task(self):
+        return self.task
 
     def clear_task(self):
         self.task = []

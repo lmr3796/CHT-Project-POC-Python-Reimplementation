@@ -48,7 +48,7 @@ if __name__ == '__main__':
     else:
         assert sys.argv[-1] == 'rpc'
         deadline = float(sys.argv[4])
-        job_set = [Job(), Job()]
+        job_set = [Job('Loose job'), Job('Tight job')]
         for r in solver.split_ranges(THREAD_TO_USE):
             job_set[0].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
         job_set[0].set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
@@ -60,6 +60,7 @@ if __name__ == '__main__':
 
         schedule = framework.get_dispatcher().dispatch_job(job_set)
         print schedule
+        framework.run_job_set_by_schdule(job_set, schedule)
 
 
         #print xmlrpclib.ServerProxy(addr).dispatch_job()
