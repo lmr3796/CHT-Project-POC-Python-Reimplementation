@@ -8,11 +8,7 @@ import config
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
-def run_jobs(job_set):
-    pass
-
 def build_rpc_server_from_component(comp):
-    socket.setdefaulttimeout(30)
     server = SimpleXMLRPCServer(('', config.port[comp.__class__.__name__]))
     server.register_instance(comp)
     return server 
