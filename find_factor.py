@@ -46,7 +46,7 @@ if __name__ == '__main__':
         solver.run()
         print solver.get_result()
     else:
-        assert sys.argv[-1] == 'rpc'
+        assert sys.argv[-1] in ('dry-run', 'rpc')
         deadline = float(sys.argv[4])
         job_set = [Job('Loose job'), Job('Tight job')]
         for r in solver.split_ranges(THREAD_TO_USE):
@@ -60,7 +60,8 @@ if __name__ == '__main__':
 
         schedule = framework.get_dispatcher().dispatch_job(job_set)
         print schedule
-        framework.run_job_set_by_schdule(job_set, schedule)
+        if sys.argv[-1] != 'dry-run':
+            framework.run_job_set_by_schdule(job_set, schedule)
 
 
         #print xmlrpclib.ServerProxy(addr).dispatch_job()
