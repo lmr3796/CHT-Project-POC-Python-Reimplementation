@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 import sys
+import socket
 import xmlrpclib
 
 import config
-import pickle
 import framework 
 
 class FindFactorJob(object):
@@ -15,7 +15,7 @@ class FindFactorJob(object):
 
     def solve(self):
         total = 0
-        for i in range(self.begin, self.end):
+        for i in xrange(self.begin, self.end):
             if self.to_find % i == 0:
                 total += 1
         return total
@@ -35,4 +35,5 @@ if __name__ == '__main__':
     else:
         worker_name = config.workers[0]
         addr = 'http://%s:%d'%(config.worker_address[worker_name], config.port['Worker'])
-        print xmlrpclib.ServerProxy(addr).run_job(['/bin/ls', '-al'])
+        socket.setdefaulttimeout(30)
+        print xmlrpclib.ServerProxy(addr).run_job([__file__, str(begin), str(end), str(to_find)]).strip()

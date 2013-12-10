@@ -13,6 +13,5 @@ class Worker(object):
         result = subprocess.check_output(cmd)
         return result
 
-
 if __name__ == '__main__':
     framework.build_rpc_server_from_component(Worker()).serve_forever()
