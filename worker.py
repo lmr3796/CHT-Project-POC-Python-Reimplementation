@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
+import component
 import config
+
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 class Worker(object):
