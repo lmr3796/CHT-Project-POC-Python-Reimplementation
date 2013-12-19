@@ -21,11 +21,6 @@ class DecisionMaker(object):
                 for w in assigned_worker:
                     worker_scheduled[w] = True
                 schedule_result[i] = assigned_worker
-                '''
-                if False not in worker_scheduled.values():  # All workers occupied 
-                    break
-                    '''
-            return schedule_result
 
         except Exception as e:
             import traceback

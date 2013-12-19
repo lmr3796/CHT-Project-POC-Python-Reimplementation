@@ -17,14 +17,14 @@ def run_task_on_worker(task, worker):
     return xmlrpclib.ServerProxy(addr).run_job(task)
 
 def run_single_job(job_id, job, worker_set):
-    import time
-    curr = time.time()
-    res = []
     def pull_job_for_worker(q, worker):
         while not q.empty():
             i, t = q.get()
             res.append((i, run_task_on_worker(t,worker)))
         return
+    import time
+    curr = time.time()
+    res = [] # TODO: res is not thread safe for using a simple []
     from Queue import Queue
     task_queue = Queue()
     for i, t in enumerate(job.get_task()):

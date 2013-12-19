@@ -9,6 +9,7 @@ class Job(object):
         self.single_server_throughput = 0.0
         self.per_server_throughput = {}
 
+    # Serve as a exec command (command, ARGV1, ARGV2.....)
     def add_task(self, cmd, *arg):
         self.task.append([cmd] + list(arg))
         return
