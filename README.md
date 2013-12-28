@@ -16,7 +16,7 @@ e.g. `./find_factor.py 1 200000001 200000000 32 rpc`
 **Note** that the range to find is **[BEGIN, END)**, so END must be the greatest number
 you like +1
 
-* `TARGET_NUMBER`: number of tasks into which this job can be divided
+* `TARGET_NUMBER`: target number of factors found
 * `DEADLINE`: time constraint in seconds
 * `RUNNING_MODE` can be `rpc` or `dry-run`
     1. `rpc`: dispatch jobs
