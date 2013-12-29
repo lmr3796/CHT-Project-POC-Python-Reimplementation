@@ -77,20 +77,20 @@ class DecisionMaker(object):
                         best_worker = w
                 assert best_worker != None
                 schedule_result[i] = [best_worker]
-                if len(job['task']) == len(schedule_result[i]):  # max_worker is 1
-                    workload[i] = workload[i] - (len(worker_available) * 2)  # put behind all other jobs
-                else:
-                    workload[i] = workload[i] - 1.0
+                workload[i] = workload[i] - 1.0
                 worker_scheduled[best_worker] = True
             # Second, assign the rest of workers
             while len([w for w in worker_scheduled if not worker_scheduled[w]]) > 0:
                 heaviest_job_id = None
                 for idx in range(len(workload)):
+                    if len(job['task']) == len(schedule_result[idx]):
+                        continue
                     if heaviest_job_id == None:
                         heaviest_job_id = idx
                     elif workload[idx] > workload[heaviest_job_id]:
                         heaviest_job_id = idx
-                assert heaviest_job_id != None
+                if heaviest_job_id == None:
+                    break
                 job = job_set[heaviest_job_id]
                 best_worker = None
                 for w in [w for w in worker_scheduled if not worker_scheduled[w]]:
@@ -100,10 +100,7 @@ class DecisionMaker(object):
                         best_worker = w
                 assert best_worker != None
                 schedule_result[heaviest_job_id].append(best_worker)
-                if len(job['task']) == len(schedule_result[heaviest_job_id]):
-                    workload[heaviest_job_id] = workload[heaviest_job_id] - (len(worker_available) * 2)
-                else:
-                    workload[heaviest_job_id] = workload[heaviest_job_id] - 1.0
+                workload[heaviest_job_id] = workload[heaviest_job_id] - 1.0
                 worker_scheduled[best_worker] = True
             return schedule_result
 
