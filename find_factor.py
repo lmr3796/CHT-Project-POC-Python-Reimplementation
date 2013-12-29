@@ -40,9 +40,13 @@ class FindFactorSolver(object):
         return res
 
 if __name__ == '__main__':
+    if len(sys.argv) != 4 and len(sys.argv) != 6:
+        print "Usage: find_factor.py BEGIN END TARGET_NUMBER"
+        print "   or  find_factor.py BEGIN END TARGET_NUMBER TIME_LIMIT RUNNING_MODE"
+        exit()
     begin, end, to_find = map(lambda x: int(x), sys.argv[1:4])
     solver = FindFactorSolver(begin, end, to_find)
-    if len(sys.argv) <= 5:
+    if len(sys.argv) == 4:
         solver.run()
         print solver.get_result()
     else:
@@ -53,12 +57,14 @@ if __name__ == '__main__':
         # Loose job
         for r in solver.split_ranges(THREAD_TO_USE):
             job_set[0].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
+        job_set[0].set_priority(4)
         job_set[0].set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
         job_set[0].set_required_throughput(THREAD_TO_USE/deadline)
 
         # Tight job
         for r in solver.split_ranges(THREAD_TO_USE):
             job_set[1].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
+        job_set[1].set_priority(2)
         job_set[1].set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
         job_set[1].set_required_throughput(THREAD_TO_USE/(deadline/2))  # The tighter job simply halfs the deadline
 
