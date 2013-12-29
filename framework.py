@@ -20,22 +20,24 @@ def run_single_job(job_id, job, worker_set):
     def pull_job_for_worker(q, worker):
         while not q.empty():
             i, t = q.get()
-            res.append((i, run_task_on_worker(t, worker)))
+            res[i] = run_task_on_worker(t, worker)
         return
     import time
     curr = time.time()
-    res = [] # TODO: res is not thread safe for using a simple []
+    res = [None] * len(job.get_task())
     from Queue import Queue
     task_queue = Queue()
     for i, t in enumerate(job.get_task()):
-        task_queue.put((i,t))
+        task_queue.put((i, t))
     worker_runners = map(lambda w: Thread(target=pull_job_for_worker, args=(task_queue, w)), worker_set)
     for t in worker_runners:
         t.start()
     for t in worker_runners:
         t.join()
-    print '%d. %s: %02.3f seconds, %d tasks, ans=%d' % (job_id, job.get_name(), time.time() - curr, len(job.get_task()), reduce(lambda x,y: x+int(y[1]), res, 0))
-    return res
+    ans = reduce(lambda x, y: x + int(y), res, 0);
+    print 'Job[%d] "%s" finished at %6.3f seconds, %d tasks, ans=%d' % (job_id,
+            job.get_name(), time.time() - curr, len(job.get_task()), ans)
+    return  # Python does not support the retrieval of return value of a Thread, so any return value is meaningless
 
 def run_job_set_by_schdule(job_set, schedule):
     assert len(job_set) == len(schedule)
