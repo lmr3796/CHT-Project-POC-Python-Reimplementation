@@ -83,7 +83,7 @@ class DecisionMaker(object):
             while len([w for w in worker_scheduled if not worker_scheduled[w]]) > 0:
                 heaviest_job_id = None
                 for idx in range(len(workload)):
-                    if len(job['task']) == len(schedule_result[idx]):
+                    if len(job_set[idx]['task']) == len(schedule_result[idx]):
                         continue
                     if heaviest_job_id == None:
                         heaviest_job_id = idx
