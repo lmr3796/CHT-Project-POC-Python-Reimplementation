@@ -11,16 +11,18 @@ class DecisionMaker(object):
             worker_scheduled = {w: False for w, s in worker_available.iteritems() if s}
             schedule_result = [None] * len(job_set)
             for i, job in sorted_job_set:
-                workers_by_throughput = sorted([w for w in worker_scheduled if not worker_scheduled[w]], key=lambda x: job['single_server_throughput'], reverse=True)
+                worker_by_throughput = sorted([w for w in worker_scheduled if not worker_scheduled[w]],
+                        key=lambda x: job['single_server_throughput'], reverse=True)
                 assigned_worker = self.get_required_worker_range(
                         job,
                         job['required_throughput'],
                         len(job['task']),
-                        workers_by_throughput
+                        worker_by_throughput
                         )
                 for w in assigned_worker:
                     worker_scheduled[w] = True
                 schedule_result[i] = assigned_worker
+            return schedule_result
 
         except Exception as e:
             import traceback
@@ -30,14 +32,9 @@ class DecisionMaker(object):
 
     def get_required_worker_range(self, job, required, max_worker, worker_seq):
         import operator, math
-        workers_needed = min(max_worker, len(worker_seq) , int(math.ceil(required / job['single_server_throughput'])))
-        return worker_seq[0:workers_needed]
-
-
-
-
-
+        worker_needed = min(max_worker, len(worker_seq) , int(math.ceil(required / job['single_server_throughput'])))
+        return worker_seq[0:worker_needed]
 
 if __name__ == '__main__':
-    framework.build_rpc_server_from_framework(DecisionMaker()).serve_forever()
+    framework.build_rpc_server_from_component(DecisionMaker()).serve_forever()
 

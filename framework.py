@@ -20,7 +20,7 @@ def run_single_job(job_id, job, worker_set):
     def pull_job_for_worker(q, worker):
         while not q.empty():
             i, t = q.get()
-            res.append((i, run_task_on_worker(t,worker)))
+            res.append((i, run_task_on_worker(t, worker)))
         return
     import time
     curr = time.time()
@@ -54,15 +54,17 @@ def get_dispatcher():
     addr = 'http://%s:%d'%('localhost', config.port['Dispatcher'])
     return xmlrpclib.ServerProxy(addr, allow_none=True)
     
-def get_dicision_maker():
-    return
+def get_decision_maker():
+    addr = 'http://%s:%d'%('localhost', config.port['DecisionMaker'])
+    return xmlrpclib.ServerProxy(addr, allow_none=True)
 
 def build_rpc_server_from_component(comp):
     server = SimpleXMLRPCServer(('', config.port[comp.__class__.__name__]), allow_none=True)
     server.register_instance(comp)
+    print "RPC Server started: %s:%d"%(comp.__class__.__name__, config.port[comp.__class__.__name__])
     return server 
 
-''' For example only'''
+# For testing RPC server
 class Example(object):
     def add(self, a, b):
         return a+b
