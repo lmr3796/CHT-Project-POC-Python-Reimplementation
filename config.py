@@ -15,5 +15,7 @@ port = {
         'Dispatcher'    : 8001,
         'Worker'        : 8002,
         }
+scheduling_policy = 'Workload'
+
 if __name__ == '__main__':
     pass

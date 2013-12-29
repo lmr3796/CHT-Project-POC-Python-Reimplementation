@@ -55,13 +55,13 @@ if __name__ == '__main__':
         job_set = [Job('Loose job'), Job('Tight job')]
 
         # Loose job
-        for r in solver.split_ranges(3):
+        for r in solver.split_ranges(2):
             job_set[0].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
         for idx, worker in enumerate(config.workers):
             job_set[0].set_per_server_time(worker, SINGLE_THREAD_TIME - idx)
         print job_set[0].per_server_time
         job_set[0].set_priority(4)
-        job_set[0].set_sequential_time(SINGLE_THREAD_TIME)
+        job_set[0].set_sequential_time(SINGLE_THREAD_TIME * 3)
         job_set[0].set_deadline(deadline)
 
         # Tight job
@@ -71,9 +71,10 @@ if __name__ == '__main__':
             job_set[1].set_per_server_time(worker, SINGLE_THREAD_TIME + idx)
         print job_set[1].per_server_time
         job_set[1].set_priority(2)
-        job_set[1].set_sequential_time(SINGLE_THREAD_TIME + 1)
+        job_set[1].set_sequential_time(SINGLE_THREAD_TIME)
         job_set[1].set_deadline(deadline/2)  # The tighter job simply halfs the deadline
 
+        framework.get_decision_maker().set_scheduling_policy('Workload')
         schedule = framework.get_dispatcher().dispatch_job(job_set)
         print schedule
         if sys.argv[-1] != 'dry-run':
