@@ -5,9 +5,9 @@ class Job(object):
         self.jobname = name
         self.task = []
         self.priority = 0
-        self.required_throughput = 0.0
-        self.single_server_throughput = 0.0
-        self.per_server_throughput = {}
+        self.deadline = 0.0
+        self.sequential_time = 0.0
+        self.per_server_time = {}
 
     # Serve as a exec command (command, ARGV1, ARGV2.....)
     def add_task(self, cmd, *arg):
@@ -26,18 +26,18 @@ class Job(object):
     def get_max_worker(self):
         return len(self, task)
 
-    def set_single_server_throughput(self, throughput):
-        self.single_server_throughput = throughput
+    def set_sequential_time(self, sequential_time):
+        self.sequential_time = sequential_time
 
-    def set_per_server_throughput(self, worker, throughput):
-        self.per_server_throughput[worker] = throughput
+    def set_per_server_time(self, worker, time):
+        self.per_server_time[worker] = time
 
-    def set_required_throughput(self, required_throughput):
-        self.required_throughput = required_throughput
+    def set_deadline(self, deadline):
+        self.deadline = deadline
         return 
 
-    def get_required_throughput(self):
-        return required_throughput
+    def get_deadline(self):
+        return deadline
 
     # higher value means higher priority
     def set_priority(self, priority):

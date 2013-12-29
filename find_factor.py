@@ -8,7 +8,7 @@ import framework
 from job import Job
 
 THREAD_TO_USE = 8
-SINGLE_THREAD_TIME = 2.0
+SINGLE_THREAD_TIME = 18.0  # find_factor.py 1 200000001 200000000
 
 class FindFactorSolver(object):
 
@@ -55,18 +55,24 @@ if __name__ == '__main__':
         job_set = [Job('Loose job'), Job('Tight job')]
 
         # Loose job
-        for r in solver.split_ranges(THREAD_TO_USE):
+        for r in solver.split_ranges(3):
             job_set[0].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
+        for idx, worker in enumerate(config.workers):
+            job_set[0].set_per_server_time(worker, SINGLE_THREAD_TIME - idx)
+        print job_set[0].per_server_time
         job_set[0].set_priority(4)
-        job_set[0].set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
-        job_set[0].set_required_throughput(THREAD_TO_USE/deadline)
+        job_set[0].set_sequential_time(SINGLE_THREAD_TIME)
+        job_set[0].set_deadline(deadline)
 
         # Tight job
         for r in solver.split_ranges(THREAD_TO_USE):
             job_set[1].add_task(__file__, str(r[0]), str(r[1]), str(to_find))
+        for idx, worker in enumerate(config.workers):
+            job_set[1].set_per_server_time(worker, SINGLE_THREAD_TIME + idx)
+        print job_set[1].per_server_time
         job_set[1].set_priority(2)
-        job_set[1].set_single_server_throughput(1.0/SINGLE_THREAD_TIME)
-        job_set[1].set_required_throughput(THREAD_TO_USE/(deadline/2))  # The tighter job simply halfs the deadline
+        job_set[1].set_sequential_time(SINGLE_THREAD_TIME + 1)
+        job_set[1].set_deadline(deadline/2)  # The tighter job simply halfs the deadline
 
         schedule = framework.get_dispatcher().dispatch_job(job_set)
         print schedule
