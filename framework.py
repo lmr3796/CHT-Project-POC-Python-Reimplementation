@@ -60,10 +60,12 @@ def get_decision_maker():
     addr = 'http://%s:%d'%('localhost', config.port['DecisionMaker'])
     return xmlrpclib.ServerProxy(addr, allow_none=True)
 
-def build_rpc_server_from_component(comp):
-    server = SimpleXMLRPCServer(('', config.port[comp.__class__.__name__]), allow_none=True)
+def build_rpc_server_from_component(comp, service_name=None):
+    if service_name == None:
+        service_name = comp.__class__.__name__
+    server = SimpleXMLRPCServer(('', config.port[service_name]), allow_none=True)
     server.register_instance(comp)
-    print "RPC Server started: %s:%d"%(comp.__class__.__name__, config.port[comp.__class__.__name__])
+    print "RPC Server started: %s:%d"%(comp.__class__.__name__, config.port[service_name])
     return server 
 
 # For testing RPC server
