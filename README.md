@@ -6,6 +6,7 @@ CHT-Project-POC-Python-Reimplementation
 2.  Edit `./config.py` for worker information
 3.  Run `./worker.py` on each worker node
 4.  Run `./dispatcher.py` on coordinator
+5.  Run `./decision_maker_by_deadline.py` on coordinator; you can also use other decision makers instead.
 
 ## Run application
 *  Run `./find_factor.py` on coordinator
