@@ -48,8 +48,8 @@ def main():
     t1 = Thread(target=framework.run_job_set, args=(job_set,))
     t1.start()
 
+    # Simulate gap between job arrival
     time.sleep(delay)
-
 
     # Second batch
     print 'Dispatching second batch'

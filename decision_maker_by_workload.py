@@ -1,4 +1,5 @@
 #! /usr/bin/env python
+import sys
 
 import framework
 import config
@@ -6,9 +7,11 @@ import config
 class DecisionMakerByWorkload(object):
     def schedule_jobs(self, job_set, worker_available_status):
         try:
-            print 'Workload-based scheduling'
+            print >> sys.stderr, 'Workload-based scheduling'
             workload = [sum(j['per_server_time'].values())/float(len(j['per_server_time'])) for j in job_set]
             total_workload = sum(workload)
+            print >> sys.stderr, 'Workload:',  workload
+            print >> sys.stderr, 'Total workload:',  total_workload
             for idx in range(len(workload)):
                 workload[idx] = len(worker_available_status) * workload[idx] / total_workload
             sorted_job_set = sorted([(idx, j) for idx, j in enumerate(job_set)],

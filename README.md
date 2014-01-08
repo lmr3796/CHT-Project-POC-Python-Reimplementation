@@ -22,3 +22,5 @@ you like +1
 * `RUNNING_MODE` can be `rpc` or `dry-run`
     1. `rpc`: dispatch jobs
     2. `dry-run`: generates schdule output only
+## Miscs
+*   Lower priority values stands for higher priority

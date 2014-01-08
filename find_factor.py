@@ -61,7 +61,7 @@ if __name__ == '__main__':
             # "+ idx" emulates heterogeneous environment
             job_set[0].set_per_server_time(worker, (SINGLE_THREAD_TIME / 2) + idx)
         print job_set[0].per_server_time
-        job_set[0].set_priority(4)
+        job_set[0].set_priority(2)
         job_set[0].set_deadline(deadline)
 
         # Tight job with THREAD_TO_USE tasks, half deadline
@@ -71,7 +71,7 @@ if __name__ == '__main__':
             # "+ idx" emulates heterogeneous environment
             job_set[1].set_per_server_time(worker, SINGLE_THREAD_TIME + idx)
         print job_set[1].per_server_time
-        job_set[1].set_priority(2)
+        job_set[1].set_priority(4)
         job_set[1].set_deadline(deadline/2)  # The tighter job simply halfs the deadline
 
         if sys.argv[-1] == 'dry-run':

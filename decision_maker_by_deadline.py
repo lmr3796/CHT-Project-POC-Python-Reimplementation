@@ -9,8 +9,7 @@ class DecisionMakerByDeadline(object):
             print 'Deadline-based scheduling'
             print 'Available worker: %s' % worker_available_status
             # Concept: make jobs with higher priority meet their deadlines
-            sorted_job_set = sorted([(idx, j) for idx, j in enumerate(job_set)],
-                    key=lambda x: x[1]['priority'], reverse=True)
+            sorted_job_set = sorted([(idx, j) for idx, j in enumerate(job_set)], key=lambda x: x[1]['priority'])
             remaining_worker = [w for w, available in worker_available_status.iteritems() if available]
             schedule_result = [[] for i in range(len(job_set))] # Don't use [[]] * len(), contents would be the same reference
             # Let important jobs meet their deadline in optimal workers
