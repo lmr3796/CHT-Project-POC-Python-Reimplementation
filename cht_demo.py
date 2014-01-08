@@ -34,9 +34,9 @@ def main():
         bzip2_job.set_per_server_time(worker, BZIP2_PER_TASK_RUNNING_TIME)
         h264_job.set_per_server_time(worker, H264_PER_TASK_RUNNING_TIME)
 
-    wc_job.set_priority(1)
+    wc_job.set_priority(3)
     bzip2_job.set_priority(2)
-    h264_job.set_priority(3)
+    h264_job.set_priority(1)
 
     # First batch
     print 'Dispatching first batch'
