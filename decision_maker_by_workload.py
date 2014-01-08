@@ -4,16 +4,16 @@ import framework
 import config
 
 class DecisionMakerByWorkload(object):
-    def schedule_jobs(self, job_set, worker_available):
+    def schedule_jobs(self, job_set, worker_available_status):
         try:
             print 'Workload-based scheduling'
-            total_workload = reduce(lambda x, y: x + y['sequential_time'], job_set, 0.0)
-            workload = [j['sequential_time'] for j in job_set]
+            workload = [sum(j['per_server_time'].values())/float(len(j['per_server_time'])) for j in job_set]
+            total_workload = sum(workload)
             for idx in range(len(workload)):
-                workload[idx] = len(worker_available) * workload[idx] / total_workload
+                workload[idx] = len(worker_available_status) * workload[idx] / total_workload
             sorted_job_set = sorted([(idx, j) for idx, j in enumerate(job_set)],
                     key=lambda x: workload[x[0]], reverse=True)
-            worker_scheduled = {w: False for w, available in worker_available.iteritems() if available}
+            worker_scheduled = {w: False for w, available in worker_available_status.iteritems() if available}
             schedule_result = [None] * len(job_set)
             # First, assign each job with one worker
             for i, job in sorted_job_set:

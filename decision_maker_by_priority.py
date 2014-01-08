@@ -4,12 +4,12 @@ import framework
 import config
 
 class DecisionMakerByPriority(object):
-    def schedule_jobs(self, job_set, worker_available):
+    def schedule_jobs(self, job_set, worker_available_status):
         try:
             print 'Priority-based scheduling'
             sorted_job_set = sorted([(idx, j) for idx, j in enumerate(job_set)],
                     key=lambda x: x[1]['priority'], reverse=True)
-            worker_scheduled = {w: False for w, available in worker_available.iteritems() if available}
+            worker_scheduled = {w: False for w, available in worker_available_status.iteritems() if available}
             schedule_result = [None] * len(job_set)
             # First, assign each job with one worker
             for i, job in sorted_job_set:

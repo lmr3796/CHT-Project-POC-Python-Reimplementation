@@ -26,9 +26,6 @@ class Job(object):
     def get_max_worker(self):
         return len(self, task)
 
-    def set_sequential_time(self, sequential_time):
-        self.sequential_time = sequential_time
-
     def set_per_server_time(self, worker, time):
         self.per_server_time[worker] = time
 
