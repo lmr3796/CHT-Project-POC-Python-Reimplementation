@@ -74,7 +74,8 @@ if __name__ == '__main__':
         job_set[1].set_priority(2)
         job_set[1].set_deadline(deadline/2)  # The tighter job simply halfs the deadline
 
-        schedule = framework.get_dispatcher().dispatch_job(job_set)
-        print schedule
-        if sys.argv[-1] != 'dry-run':
-            framework.run_job_set_by_schdule(job_set, schedule)
+        if sys.argv[-1] == 'dry-run':
+            schedule = framework.get_dispatcher().schdule_jobs(job_set)
+            print schedule
+        elif sys.argv[-1] == 'rpc':
+            framework.run_job_set(job_set, True)

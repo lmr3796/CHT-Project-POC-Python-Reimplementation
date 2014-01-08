@@ -1,15 +1,18 @@
 #! /usr/bin/env python
 
+import sys
 import socket
+import time
 import xmlrpclib
+from Queue import Queue
 
 import config
 import job
-
-
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from threading import Thread
 
+
+MAX_LOCK_RETRY = 3
 
 # TODO: retrieve back results
 def run_task_on_worker(task, worker):
@@ -22,10 +25,8 @@ def run_single_job(job_id, job, worker_set):
             i, t = q.get()
             res[i] = run_task_on_worker(t, worker)
         return
-    import time
     curr = time.time()
     res = [None] * len(job.get_task())
-    from Queue import Queue
     task_queue = Queue()
     for i, t in enumerate(job.get_task()):
         task_queue.put((i, t))
@@ -34,20 +35,63 @@ def run_single_job(job_id, job, worker_set):
         t.start()
     for t in worker_runners:
         t.join()
-    ans = reduce(lambda x, y: x + int(y), res, 0);
-    print 'Job[%d] "%s" finished at %6.3f seconds, %d tasks, ans=%d' % (job_id,
-            job.get_name(), time.time() - curr, len(job.get_task()), ans)
+
+    # Release workers after job done
+    for w in worker_set:
+        get_dispatcher().release_worker(w)
+
+    print 'Job[%d] "%s" finished in %6.3f seconds, %d tasks' % (job_id,
+            job.get_name(), time.time() - curr, len(job.get_task()))
     return  # Python does not support the retrieval of return value of a Thread, so any return value is meaningless
 
-def run_job_set_by_schdule(job_set, schedule):
+def run_job_set_by_schdule(job_set, schedule, print_schedule):
     assert len(job_set) == len(schedule)
+
+    def release_all(schedule):
+        dispatcher = get_dispatcher()
+        for s in schedule:
+            for w in s:
+                dispatcher.release_worker(w)
+        return
+
+    def lock_all(schedule):
+        dispatcher = get_dispatcher()
+        for s in schedule:
+            for w in s:
+                if not dispatcher.lock_worker(w):
+                    return False
+        return True
+
+
+    # Try to lock required workers
+    if not lock_all(schedule):
+        release_all(schedule)
+        return False
+
+
+    if print_schedule:
+        print >> sys.stderr, schedule
+
+    # Run each job in a thread
     to_run = []
     for i, job, worker_set in zip(range(len(job_set)), job_set, schedule):
         t = Thread(target=run_single_job, args=(i, job, worker_set))
         to_run.append(t)
         t.start()
+
+    # Wait till all job done
     for t in to_run:
         t.join()
+    return True
+
+def run_job_set(job_set, print_schedule=False):
+    dispatcher = get_dispatcher()
+    for i in range(MAX_LOCK_RETRY):
+        schedule = dispatcher.schedule_jobs(job_set)
+        if run_job_set_by_schdule(job_set, schedule, print_schedule):
+            return
+
+    print >> sys.stderr, 'Fail to lock required workers'
     return
 
 
